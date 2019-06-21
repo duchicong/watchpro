@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
+use App\Helper\Cart;
+use Session;
 
 class RedirectIfAuthenticated
 {
@@ -18,7 +20,11 @@ class RedirectIfAuthenticated
     public function handle($request, Closure $next, $guard = null)
     {
         if (Auth::guard($guard)->check()) {
-            return redirect('/home');
+            if(session(['cart'=>[]])){
+                session(['cart'=>[]]);
+            }
+            Auth::logout();
+            return redirect('/');
         }
 
         return $next($request);
